@@ -2,8 +2,7 @@ package logrus
 
 import (
 	"github.com/sirupsen/logrus"
-
-	"github.com/micro/go-micro/v2/logger"
+	"github.com/unistack-org/micro/v3/logger"
 )
 
 type Options struct {
@@ -45,8 +44,8 @@ func WithExitFunc(exit func(int)) logger.Option {
 	return logger.SetOption(exitKey{}, exit)
 }
 
-type logrusLoggerKey struct{}
+type loggerKey struct{}
 
-func WithLogger(l logrus.StdLogger) logger.Option {
-	return logger.SetOption(logrusLoggerKey{}, l)
+func WithLogger(l Logger) logger.Option {
+	return logger.SetOption(loggerKey{}, l)
 }

@@ -6,20 +6,27 @@ import (
 	"os"
 
 	"github.com/sirupsen/logrus"
-
-	"github.com/micro/go-micro/v2/logger"
+	"github.com/unistack-org/micro/v3/logger"
 )
 
-type entryLogger interface {
+type Logger interface {
 	WithFields(fields logrus.Fields) *logrus.Entry
-	WithError(err error) *logrus.Entry
-
-	Log(level logrus.Level, args ...interface{})
-	Logf(level logrus.Level, format string, args ...interface{})
+	Debug(args ...interface{})
+	Debugf(format string, args ...interface{})
+	Warn(args ...interface{})
+	Warnf(format string, args ...interface{})
+	Info(args ...interface{})
+	Infof(format string, args ...interface{})
+	Fatal(args ...interface{})
+	Fatalf(format string, args ...interface{})
+	Trace(args ...interface{})
+	Tracef(format string, args ...interface{})
+	Error(args ...interface{})
+	Errorf(format string, args ...interface{})
 }
 
 type logrusLogger struct {
-	Logger entryLogger
+	Logger Logger
 	opts   Options
 }
 
@@ -41,7 +48,7 @@ func (l *logrusLogger) Init(opts ...logger.Option) error {
 		l.opts.ExitFunc = exitFunction
 	}
 
-	switch ll := l.opts.Context.Value(logrusLoggerKey{}).(type) {
+	switch ll := l.opts.Context.Value(loggerKey{}).(type) {
 	case *logrus.Logger:
 		// overwrite default options
 		l.opts.Level = logrusToLoggerLevel(ll.GetLevel())
@@ -77,6 +84,16 @@ func (l *logrusLogger) Init(opts ...logger.Option) error {
 	return nil
 }
 
+func (l *logrusLogger) V(level logger.Level) bool {
+	switch ll := l.Logger.(type) {
+	case *logrus.Logger:
+		return ll.IsLevelEnabled(loggerToLogrusLevel(level))
+	case *logrus.Entry:
+		return ll.Logger.IsLevelEnabled(loggerToLogrusLevel(level))
+	}
+	return true
+}
+
 func (l *logrusLogger) String() string {
 	return "logrus"
 }
@@ -85,12 +102,52 @@ func (l *logrusLogger) Fields(fields map[string]interface{}) logger.Logger {
 	return &logrusLogger{l.Logger.WithFields(fields), l.opts}
 }
 
-func (l *logrusLogger) Log(level logger.Level, args ...interface{}) {
-	l.Logger.Log(loggerToLogrusLevel(level), args...)
+func (l *logrusLogger) Trace(args ...interface{}) {
+	l.Logger.Trace(args...)
 }
 
-func (l *logrusLogger) Logf(level logger.Level, format string, args ...interface{}) {
-	l.Logger.Logf(loggerToLogrusLevel(level), format, args...)
+func (l *logrusLogger) Tracef(format string, args ...interface{}) {
+	l.Logger.Tracef(format, args...)
+}
+
+func (l *logrusLogger) Warn(args ...interface{}) {
+	l.Logger.Warn(args...)
+}
+
+func (l *logrusLogger) Warnf(format string, args ...interface{}) {
+	l.Logger.Warnf(format, args...)
+}
+
+func (l *logrusLogger) Info(args ...interface{}) {
+	l.Logger.Info(args...)
+}
+
+func (l *logrusLogger) Infof(format string, args ...interface{}) {
+	l.Logger.Infof(format, args...)
+}
+
+func (l *logrusLogger) Error(args ...interface{}) {
+	l.Logger.Error(args...)
+}
+
+func (l *logrusLogger) Errorf(format string, args ...interface{}) {
+	l.Logger.Errorf(format, args...)
+}
+
+func (l *logrusLogger) Fatal(args ...interface{}) {
+	l.Logger.Fatal(args...)
+}
+
+func (l *logrusLogger) Fatalf(format string, args ...interface{}) {
+	l.Logger.Fatalf(format, args...)
+}
+
+func (l *logrusLogger) Debug(args ...interface{}) {
+	l.Logger.Debug(args...)
+}
+
+func (l *logrusLogger) Debugf(format string, args ...interface{}) {
+	l.Logger.Debugf(format, args...)
 }
 
 func (l *logrusLogger) Options() logger.Options {

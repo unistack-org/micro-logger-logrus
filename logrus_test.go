@@ -6,13 +6,15 @@ import (
 	"testing"
 
 	"github.com/sirupsen/logrus"
-
-	"github.com/micro/go-micro/v2/logger"
+	"github.com/unistack-org/micro/v3/logger"
 )
 
 func TestName(t *testing.T) {
 	l := NewLogger()
-
+	if err := l.Init(); err != nil {
+		t.Fatal(err)
+	}
+	l.V(logger.InfoLevel)
 	if l.String() != "logrus" {
 		t.Errorf("error: name expected 'logrus' actual: %s", l.String())
 	}
@@ -25,18 +27,25 @@ func TestWithFields(t *testing.T) {
 		"k1": "v1",
 		"k2": 123456,
 	})
+	if err := l.Init(); err != nil {
+		t.Fatal(err)
+	}
 
 	logger.DefaultLogger = l
 
-	logger.Log(logger.InfoLevel, "testing: Info")
-	logger.Logf(logger.InfoLevel, "testing: %s", "Infof")
+	logger.Info("testing: Info")
+	logger.Infof("testing: %s", "Infof")
 }
 
 func TestWithError(t *testing.T) {
 	l := NewLogger().Fields(map[string]interface{}{"error": errors.New("boom!")})
+	if err := l.Init(); err != nil {
+		t.Fatal(err)
+	}
+
 	logger.DefaultLogger = l
 
-	logger.Log(logger.InfoLevel, "testing: error")
+	logger.Error("testing: error")
 }
 
 func TestWithLogger(t *testing.T) {
@@ -45,36 +54,54 @@ func TestWithLogger(t *testing.T) {
 		"k1": "v1",
 		"k2": 123456,
 	})
+	if err := l.Init(); err != nil {
+		t.Fatal(err)
+	}
+
 	logger.DefaultLogger = l
-	logger.Log(logger.InfoLevel, "testing: with *logrus.Logger")
+	logger.Info("testing: with *logrus.Logger")
 
 	// with *logrus.Entry
-	el := NewLogger(WithLogger(logrus.NewEntry(logrus.StandardLogger()))).Fields(map[string]interface{}{
+	el := NewLogger(WithLogger(logrus.NewEntry(logrus.New()))).Fields(map[string]interface{}{
 		"k3": 3.456,
 		"k4": true,
 	})
+	if err := el.Init(); err != nil {
+		t.Fatal(err)
+	}
+
 	logger.DefaultLogger = el
-	logger.Log(logger.InfoLevel, "testing: with *logrus.Entry")
+	logger.Info("testing: with *logrus.Entry")
 }
 
 func TestJSON(t *testing.T) {
 	logger.DefaultLogger = NewLogger(WithJSONFormatter(&logrus.JSONFormatter{}))
 
-	logger.Logf(logger.InfoLevel, "test logf: %s", "name")
+	logger.Infof("test logf: %s", "name")
 }
 
 func TestSetLevel(t *testing.T) {
 	logger.DefaultLogger = NewLogger()
 
-	logger.Init(logger.WithLevel(logger.DebugLevel))
-	logger.Logf(logger.DebugLevel, "test show debug: %s", "debug msg")
+	if err := logger.Init(logger.WithLevel(logger.DebugLevel)); err != nil {
+		t.Fatal(err)
+	}
 
-	logger.Init(logger.WithLevel(logger.InfoLevel))
-	logger.Logf(logger.DebugLevel, "test non-show debug: %s", "debug msg")
+	logger.Debugf("test show debug: %s", "debug msg")
+
+	if err := logger.Init(logger.WithLevel(logger.InfoLevel)); err != nil {
+		t.Fatal(err)
+	}
+
+	logger.Debugf("test non-show debug: %s", "debug msg")
 }
 
 func TestWithReportCaller(t *testing.T) {
-	logger.DefaultLogger = NewLogger(ReportCaller())
+	l := NewLogger(ReportCaller())
 
-	logger.Logf(logger.InfoLevel, "testing: %s", "WithReportCaller")
+	if err := l.Init(); err != nil {
+		t.Fatal(err)
+	}
+	logger.DefaultLogger = l
+	logger.Infof("testing: %s", "WithReportCaller")
 }

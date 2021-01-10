@@ -1,8 +1,8 @@
-module github.com/micro/go-plugins/logger/logrus/v2
+module github.com/unistack-org/micro-logger-logrus
 
-go 1.13
+go 1.14
 
 require (
-	github.com/micro/go-micro/v2 v2.9.1
 	github.com/sirupsen/logrus v1.4.2
+	github.com/unistack-org/micro/v3 v3.0.2-0.20201129143054-8d6eb34aeeac
 )

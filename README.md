@@ -22,3 +22,4 @@ func ExampleWithLogger() {
   logger.Infof(logger.InfoLevel, "testing: %s", "Infof")
 }
 ```
+
