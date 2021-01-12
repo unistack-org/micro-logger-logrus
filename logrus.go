@@ -105,59 +105,67 @@ func (l *logrusLogger) Fields(fields map[string]interface{}) logger.Logger {
 }
 
 func (l *logrusLogger) Trace(ctx context.Context, args ...interface{}) {
-	l.Logger.Trace(args...)
+	l.Log(ctx, logger.TraceLevel, args...)
 }
 
 func (l *logrusLogger) Tracef(ctx context.Context, format string, args ...interface{}) {
-	l.Logger.Tracef(format, args...)
+	l.Logf(ctx, logger.TraceLevel, format, args...)
 }
 
 func (l *logrusLogger) Warn(ctx context.Context, args ...interface{}) {
-	l.Logger.Warn(args...)
+	l.Log(ctx, logger.WarnLevel, args...)
 }
 
 func (l *logrusLogger) Warnf(ctx context.Context, format string, args ...interface{}) {
-	l.Logger.Warnf(format, args...)
+	l.Logf(ctx, logger.WarnLevel, format, args...)
 }
 
 func (l *logrusLogger) Info(ctx context.Context, args ...interface{}) {
-	l.Logger.Info(args...)
+	l.Log(ctx, logger.InfoLevel, args...)
 }
 
 func (l *logrusLogger) Infof(ctx context.Context, format string, args ...interface{}) {
-	l.Logger.Infof(format, args...)
+	l.Logf(ctx, logger.InfoLevel, format, args...)
 }
 
 func (l *logrusLogger) Error(ctx context.Context, args ...interface{}) {
-	l.Logger.Error(args...)
+	l.Log(ctx, logger.ErrorLevel, args...)
 }
 
 func (l *logrusLogger) Errorf(ctx context.Context, format string, args ...interface{}) {
-	l.Logger.Errorf(format, args...)
+	l.Logf(ctx, logger.ErrorLevel, format, args...)
 }
 
 func (l *logrusLogger) Fatal(ctx context.Context, args ...interface{}) {
-	l.Logger.Fatal(args...)
+	l.Log(ctx, logger.FatalLevel, args...)
+}
+
+func (l *logrusLogger) Fatalf(ctx context.Context, format string, args ...interface{}) {
+	l.Logf(ctx, logger.FatalLevel, format, args...)
+}
+
+func (l *logrusLogger) Debug(ctx context.Context, args ...interface{}) {
+	l.Log(ctx, logger.DebugLevel, args...)
+}
+
+func (l *logrusLogger) Debugf(ctx context.Context, format string, args ...interface{}) {
+	l.Logf(ctx, logger.DebugLevel, format, args...)
 }
 
 func (l *logrusLogger) Log(ctx context.Context, level logger.Level, args ...interface{}) {
+	if !l.V(level) {
+		return
+	}
+
 	l.Logger.Log(loggerToLogrusLevel(level), args...)
 }
 
 func (l *logrusLogger) Logf(ctx context.Context, level logger.Level, format string, args ...interface{}) {
+	if !l.V(level) {
+		return
+	}
+
 	l.Logger.Logf(loggerToLogrusLevel(level), format, args...)
-}
-
-func (l *logrusLogger) Fatalf(ctx context.Context, format string, args ...interface{}) {
-	l.Logger.Fatalf(format, args...)
-}
-
-func (l *logrusLogger) Debug(ctx context.Context, args ...interface{}) {
-	l.Logger.Debug(args...)
-}
-
-func (l *logrusLogger) Debugf(ctx context.Context, format string, args ...interface{}) {
-	l.Logger.Debugf(format, args...)
 }
 
 func (l *logrusLogger) Options() logger.Options {
