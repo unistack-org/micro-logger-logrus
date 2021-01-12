@@ -1,6 +1,7 @@
 package logrus
 
 import (
+	"context"
 	"errors"
 	"os"
 	"testing"
@@ -33,8 +34,8 @@ func TestWithFields(t *testing.T) {
 
 	logger.DefaultLogger = l
 
-	logger.Info("testing: Info")
-	logger.Infof("testing: %s", "Infof")
+	logger.Info(context.TODO(), "testing: Info")
+	logger.Infof(context.TODO(), "testing: %s", "Infof")
 }
 
 func TestWithError(t *testing.T) {
@@ -45,7 +46,7 @@ func TestWithError(t *testing.T) {
 
 	logger.DefaultLogger = l
 
-	logger.Error("testing: error")
+	logger.Error(context.TODO(), "testing: error")
 }
 
 func TestWithLogger(t *testing.T) {
@@ -59,7 +60,7 @@ func TestWithLogger(t *testing.T) {
 	}
 
 	logger.DefaultLogger = l
-	logger.Info("testing: with *logrus.Logger")
+	logger.Info(context.TODO(), "testing: with *logrus.Logger")
 
 	// with *logrus.Entry
 	el := NewLogger(WithLogger(logrus.NewEntry(logrus.New()))).Fields(map[string]interface{}{
@@ -71,13 +72,13 @@ func TestWithLogger(t *testing.T) {
 	}
 
 	logger.DefaultLogger = el
-	logger.Info("testing: with *logrus.Entry")
+	logger.Info(context.TODO(), "testing: with *logrus.Entry")
 }
 
 func TestJSON(t *testing.T) {
 	logger.DefaultLogger = NewLogger(WithJSONFormatter(&logrus.JSONFormatter{}))
 
-	logger.Infof("test logf: %s", "name")
+	logger.Infof(context.TODO(), "test logf: %s", "name")
 }
 
 func TestSetLevel(t *testing.T) {
@@ -87,13 +88,13 @@ func TestSetLevel(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	logger.Debugf("test show debug: %s", "debug msg")
+	logger.Debugf(context.TODO(), "test show debug: %s", "debug msg")
 
 	if err := logger.Init(logger.WithLevel(logger.InfoLevel)); err != nil {
 		t.Fatal(err)
 	}
 
-	logger.Debugf("test non-show debug: %s", "debug msg")
+	logger.Debugf(context.TODO(), "test non-show debug: %s", "debug msg")
 }
 
 func TestWithReportCaller(t *testing.T) {
@@ -103,5 +104,5 @@ func TestWithReportCaller(t *testing.T) {
 		t.Fatal(err)
 	}
 	logger.DefaultLogger = l
-	logger.Infof("testing: %s", "WithReportCaller")
+	logger.Infof(context.TODO(), "testing: %s", "WithReportCaller")
 }
