@@ -175,21 +175,14 @@ func (l *logrusLogger) Options() logger.Options {
 
 // New builds a new logger based on options
 func NewLogger(opts ...logger.Option) logger.Logger {
-	// Default options
 	options := Options{
-		Options: logger.Options{
-			Level:   logger.InfoLevel,
-			Fields:  make(map[string]interface{}),
-			Out:     os.Stderr,
-			Context: context.Background(),
-		},
+		Options:      logger.NewOptions(opts...),
 		Formatter:    new(logrus.TextFormatter),
 		Hooks:        make(logrus.LevelHooks),
 		ReportCaller: false,
 		ExitFunc:     os.Exit,
 	}
 	l := &logrusLogger{opts: options}
-	_ = l.Init(opts...)
 	return l
 }
 
