@@ -24,13 +24,16 @@ func TestName(t *testing.T) {
 }
 
 func TestWithFields(t *testing.T) {
-	l := NewLogger(logger.WithOutput(os.Stdout)).Fields(map[string]interface{}{
-		"k1": "v1",
-		"k2": 123456,
-	})
+	l := NewLogger(logger.WithOutput(os.Stdout))
+
 	if err := l.Init(); err != nil {
 		t.Fatal(err)
 	}
+
+	l = l.Fields(map[string]interface{}{
+		"k1": "v1",
+		"k2": 123456,
+	})
 
 	logger.DefaultLogger = l
 
@@ -39,10 +42,12 @@ func TestWithFields(t *testing.T) {
 }
 
 func TestWithError(t *testing.T) {
-	l := NewLogger().Fields(map[string]interface{}{"error": errors.New("boom!")})
+	l := NewLogger()
 	if err := l.Init(); err != nil {
 		t.Fatal(err)
 	}
+
+	l = l.Fields(map[string]interface{}{"error": errors.New("boom!")})
 
 	logger.DefaultLogger = l
 
@@ -51,33 +56,41 @@ func TestWithError(t *testing.T) {
 
 func TestWithLogger(t *testing.T) {
 	// with *logrus.Logger
-	l := NewLogger(WithLogger(logrus.StandardLogger())).Fields(map[string]interface{}{
-		"k1": "v1",
-		"k2": 123456,
-	})
+	l := NewLogger(WithLogger(logrus.StandardLogger()))
 	if err := l.Init(); err != nil {
 		t.Fatal(err)
 	}
+
+	l = l.Fields(map[string]interface{}{
+		"k1": "v1",
+		"k2": 123456,
+	})
 
 	logger.DefaultLogger = l
 	logger.Info(context.TODO(), "testing: with *logrus.Logger")
 
 	// with *logrus.Entry
-	el := NewLogger(WithLogger(logrus.NewEntry(logrus.New()))).Fields(map[string]interface{}{
-		"k3": 3.456,
-		"k4": true,
-	})
+	el := NewLogger(WithLogger(logrus.NewEntry(logrus.New())))
 	if err := el.Init(); err != nil {
 		t.Fatal(err)
 	}
+
+	l = l.Fields(map[string]interface{}{
+		"k3": 3.456,
+		"k4": true,
+	})
 
 	logger.DefaultLogger = el
 	logger.Info(context.TODO(), "testing: with *logrus.Entry")
 }
 
 func TestJSON(t *testing.T) {
-	logger.DefaultLogger = NewLogger(WithJSONFormatter(&logrus.JSONFormatter{}))
+	l := NewLogger(WithJSONFormatter(&logrus.JSONFormatter{}))
+	if err := l.Init(); err != nil {
+		t.Fatal(err)
+	}
 
+	logger.DefaultLogger = l
 	logger.Infof(context.TODO(), "test logf: %s", "name")
 }
 
