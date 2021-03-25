@@ -4,5 +4,5 @@ go 1.14
 
 require (
 	github.com/sirupsen/logrus v1.8.1
-	github.com/unistack-org/micro/v3 v3.3.1
+	github.com/unistack-org/micro/v3 v3.3.2
 )
