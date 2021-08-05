@@ -100,8 +100,12 @@ func (l *logrusLogger) String() string {
 	return "logrus"
 }
 
-func (l *logrusLogger) Fields(fields map[string]interface{}) logger.Logger {
-	return &logrusLogger{l.Logger.WithFields(fields), l.opts}
+func (l *logrusLogger) Fields(fields ...interface{}) logger.Logger {
+	flds := make(map[string]interface{}, len(fields)/2)
+	for i := 0; i < len(fields); i += 2 {
+		flds[fields[i].(string)] = fields[i+1]
+	}
+	return &logrusLogger{l.Logger.WithFields(flds), l.opts}
 }
 
 func (l *logrusLogger) Trace(ctx context.Context, args ...interface{}) {

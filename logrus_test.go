@@ -30,10 +30,7 @@ func TestWithFields(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	l = l.Fields(map[string]interface{}{
-		"k1": "v1",
-		"k2": 123456,
-	})
+	l = l.Fields("k1", "v1", "k2", 123456)
 
 	logger.DefaultLogger = l
 
@@ -47,7 +44,7 @@ func TestWithError(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	l = l.Fields(map[string]interface{}{"error": errors.New("boom!")})
+	l = l.Fields("error", errors.New("boom!"))
 
 	logger.DefaultLogger = l
 
@@ -61,10 +58,7 @@ func TestWithLogger(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	l = l.Fields(map[string]interface{}{
-		"k1": "v1",
-		"k2": 123456,
-	})
+	l = l.Fields("k1", "v1", "k2", 123456)
 
 	logger.DefaultLogger = l
 	logger.Info(context.TODO(), "testing: with *logrus.Logger")
@@ -75,10 +69,7 @@ func TestWithLogger(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	l = l.Fields(map[string]interface{}{
-		"k3": 3.456,
-		"k4": true,
-	})
+	l = l.Fields("k3", 3.456, "k4", true)
 
 	logger.DefaultLogger = el
 	logger.Info(context.TODO(), "testing: with *logrus.Entry")
