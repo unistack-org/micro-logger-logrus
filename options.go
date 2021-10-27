@@ -2,7 +2,7 @@ package logrus
 
 import (
 	"github.com/sirupsen/logrus"
-	"github.com/unistack-org/micro/v3/logger"
+	"go.unistack.org/micro/v3/logger"
 )
 
 type Options struct {
@@ -20,6 +20,7 @@ type formatterKey struct{}
 func WithTextTextFormatter(formatter *logrus.TextFormatter) logger.Option {
 	return logger.SetOption(formatterKey{}, formatter)
 }
+
 func WithJSONFormatter(formatter *logrus.JSONFormatter) logger.Option {
 	return logger.SetOption(formatterKey{}, formatter)
 }

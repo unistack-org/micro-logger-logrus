@@ -1,4 +1,4 @@
-package logrus
+package logrus // import "go.unistack.org/micro-logger-logrus/v3"
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/sirupsen/logrus"
-	"github.com/unistack-org/micro/v3/logger"
+	"go.unistack.org/micro/v3/logger"
 )
 
 type Logger interface {
@@ -30,6 +30,24 @@ type Logger interface {
 type logrusLogger struct {
 	Logger Logger
 	opts   Options
+}
+
+func (l *logrusLogger) Level(lvl logger.Level) {
+	switch ll := l.Logger.(type) {
+	case *logrus.Logger:
+		ll.SetLevel(loggerToLogrusLevel(lvl))
+	case *logrus.Entry:
+		ll.Logger.SetLevel(loggerToLogrusLevel(lvl))
+	}
+}
+
+func (l *logrusLogger) Clone(opts ...logger.Option) logger.Logger {
+	nl := &logrusLogger{opts: l.opts}
+	for _, o := range opts {
+		o(&nl.opts.Options)
+	}
+	_ = nl.Init()
+	return nl
 }
 
 func (l *logrusLogger) Init(opts ...logger.Option) error {
